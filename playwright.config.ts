@@ -1,79 +1,57 @@
 import { defineConfig, devices } from '@playwright/test';
 
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-// import dotenv from 'dotenv';
-// import path from 'path';
-// dotenv.config({ path: path.resolve(__dirname, '.env') });
-
-/**
- * See https://playwright.dev/docs/test-configuration.
- */
 export default defineConfig({
-  testDir: './tests',
-  /* Run tests in files in parallel */
-  fullyParallel: true,
-  /* Fail the build on CI if you accidentally left test.only in the source code. */
-  forbidOnly: !!process.env.CI,
-  /* Retry on CI only */
-  retries: process.env.CI ? 2 : 0,
-  /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
-  /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
-  /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
-  use: {
-    /* Base URL to use in actions like `await page.goto('/')`. */
-    // baseURL: 'http://localhost:3000',
+  // กำหนดโฟลเดอร์หลักของเทสทั้งหมด (ไม่จำเป็นต้องใส่ เพราะเราจะไปกำหนดในแต่ละ project)
+  // testDir: './tests',
 
-    /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
+  fullyParallel: true,
+  forbidOnly: !!process.env.CI,
+  retries: process.env.CI ? 2 : 0,
+  workers: process.env.CI ? 1 : undefined,
+  reporter: 'html',
+
+  // use: Block กลาง จะเป็นการตั้งค่าร่วมที่ทุก project จะได้รับไป
+  // เราจะย้าย baseURL ไปไว้ในแต่ละ project แทน
+  use: {
     trace: 'on-first-retry',
   },
 
-  /* Configure projects for major browsers */
+  /* ===== กำหนดค่า Projects ของเราตรงนี้ ===== */
   projects: [
+    /* --- Project สำหรับ UI Tests --- */
     {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      name: 'ui-chromium',
+      testDir: './tests/ui', // ระบุว่าให้รันเทสเฉพาะในโฟลเดอร์ ui
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL: 'https://www.saucedemo.com', // baseURL สำหรับ UI
+      },
+    },
+    {
+      name: 'ui-firefox',
+      testDir: './tests/ui',
+      use: {
+        ...devices['Desktop Firefox'],
+        baseURL: 'https://www.saucedemo.com',
+      },
+    },
+    {
+      name: 'ui-webkit',
+      testDir: './tests/ui',
+      use: {
+        ...devices['Desktop Safari'],
+        baseURL: 'https://www.saucedemo.com',
+      },
     },
 
+    /* --- Project สำหรับ API Tests --- */
     {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
+      name: 'api-tests',
+      testDir: './tests/api', // ระบุว่าให้รันเทสเฉพาะในโฟลเดอร์ api
+      use: {
+        // ไม่ต้องใช้ device สำหรับ API test
+        baseURL: 'https://jsonplaceholder.typicode.com', // baseURL สำหรับ API
+      },
     },
-
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
-
-    /* Test against mobile viewports. */
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
-    // },
-    // {
-    //   name: 'Mobile Safari',
-    //   use: { ...devices['iPhone 12'] },
-    // },
-
-    /* Test against branded browsers. */
-    // {
-    //   name: 'Microsoft Edge',
-    //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-    // },
-    // {
-    //   name: 'Google Chrome',
-    //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-    // },
   ],
-
-  /* Run your local dev server before starting the tests */
-  // webServer: {
-  //   command: 'npm run start',
-  //   url: 'http://localhost:3000',
-  //   reuseExistingServer: !process.env.CI,
-  // },
 });

@@ -3,10 +3,10 @@
 import { test, expect } from '@playwright/test';
 
 // --- Import Page Objects ทั้งหมดที่เราสร้างขึ้น ---
-import { LoginPage } from '../pages/LoginPage';
-import { InventoryPage } from '../pages/InventoryPage';
-import { CartPage } from '../pages/CartPage';
-import { CheckoutPage } from '../pages/CheckoutPage';
+import { LoginPage } from '../../pages/LoginPage';
+import { InventoryPage } from '../../pages/InventoryPage';
+import { CartPage } from '../../pages/CartPage';
+import { CheckoutPage } from '../../pages/CheckoutPage';
 
 test.describe('SauceDemo E2E Flow with POM', () => {
 

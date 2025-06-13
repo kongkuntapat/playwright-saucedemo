@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Standard User (Valid Login)",
+    "username": "standard_user",
+    "password": "secret_sauce",
+    "should_pass": true,
+    "expected_element": ".title",
+    "expected_text": "Products"
+  },
+  {
+    "name": "Locked Out User (Invalid Login)",
+    "username": "locked_out_user",
+    "password": "secret_sauce",
+    "should_pass": false,
+    "expected_element": "[data-test='error']",
+    "expected_text": "Sorry, this user has been locked out"
+  },
+  {
+    "name": "Invalid Credentials User (Invalid Login)",
+    "username": "invalid_user",
+    "password": "wrong_password",
+    "should_pass": false,
+    "expected_element": "[data-test='error']",
+    "expected_text": "Username and password do not match"
+  }
+]
