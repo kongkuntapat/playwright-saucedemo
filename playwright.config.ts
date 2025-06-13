@@ -18,14 +18,24 @@ export default defineConfig({
 
   /* ===== กำหนดค่า Projects ของเราตรงนี้ ===== */
   projects: [
-    /* --- Project สำหรับ UI Tests --- */
+    /* --- Project สำหรับ Setup การ Login (เพิ่มอันนี้เข้ามาเป็นอันแรก) --- */
+    {
+      name: 'setup',
+      testMatch: /auth\.setup\.ts/, // สั่งให้ project นี้รันเฉพาะไฟล์ auth.setup.ts
+    },
+
+    /* --- Project สำหรับ UI Tests (แก้ไขของเดิม) --- */
     {
       name: 'ui-chromium',
-      testDir: './tests/ui', // ระบุว่าให้รันเทสเฉพาะในโฟลเดอร์ ui
+      testDir: './tests/ui',
       use: {
         ...devices['Desktop Chrome'],
-        baseURL: 'https://www.saucedemo.com', // baseURL สำหรับ UI
+        baseURL: 'https://www.saucedemo.com',
+        // บอกให้ project นี้ใช้สถานะที่ถูกบันทึกไว้จาก setup
+        storageState: 'playwright/.auth/user.json',
       },
+      // (สำคัญ) บอกว่า project นี้ต้องรันหลังจาก project 'setup' ทำงานเสร็จ
+      dependencies: ['setup'],
     },
     {
       name: 'ui-firefox',
@@ -33,7 +43,9 @@ export default defineConfig({
       use: {
         ...devices['Desktop Firefox'],
         baseURL: 'https://www.saucedemo.com',
+        storageState: 'playwright/.auth/user.json',
       },
+      dependencies: ['setup'],
     },
     {
       name: 'ui-webkit',
@@ -41,16 +53,17 @@ export default defineConfig({
       use: {
         ...devices['Desktop Safari'],
         baseURL: 'https://www.saucedemo.com',
+        storageState: 'playwright/.auth/user.json',
       },
+      dependencies: ['setup'],
     },
 
-    /* --- Project สำหรับ API Tests --- */
+    /* --- Project สำหรับ API Tests (เหมือนเดิม) --- */
     {
       name: 'api-tests',
-      testDir: './tests/api', // ระบุว่าให้รันเทสเฉพาะในโฟลเดอร์ api
+      testDir: './tests/api',
       use: {
-        // ไม่ต้องใช้ device สำหรับ API test
-        baseURL: 'https://jsonplaceholder.typicode.com', // baseURL สำหรับ API
+        baseURL: 'https://jsonplaceholder.typicode.com',
       },
     },
   ],
